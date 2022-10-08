@@ -2,7 +2,7 @@ const Card = require('../models/card');
 const {
   handleDefaultError, sendData,
 } = require('../utils/utils');
-const { defaultErrorText, cardNotFoundErrorText, invalidDataErrorText } = require('../utils/constants');
+const { DEFAULT, NOTFOUND, VALIDATION } = require('../utils/constants');
 
 exports.createCard = (req, res) => {
   const { name, link } = req.body;
@@ -13,8 +13,8 @@ exports.createCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: invalidDataErrorText });
-      } else { handleDefaultError(err, 500, defaultErrorText, res); }
+        res.status(VALIDATION).send({ message: 'Переданы некорректные данные' });
+      } else { handleDefaultError(err, DEFAULT, 'Произошла ошибка', res); }
     });
 };
 
@@ -23,22 +23,22 @@ exports.getCards = (req, res) => {
     .then((cards) => {
       sendData({ dataType: 'cards' }, 200, cards, res);
     })
-    .catch((err) => handleDefaultError(err, 500, defaultErrorText, res));
+    .catch((err) => handleDefaultError(err, DEFAULT, 'Произошла ошибка', res));
 };
 
 exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {
-        res.status(404).send({ message: cardNotFoundErrorText });
+        res.status(NOTFOUND).send({ message: 'Пользователь или карточка с указанным _id не найдены' });
         return;
       }
       sendData({ dataType: 'card' }, 200, card, res);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: invalidDataErrorText });
-      } else { handleDefaultError(err, 500, defaultErrorText, res); }
+        res.status(VALIDATION).send({ message: 'Переданы некорректные данные' });
+      } else { handleDefaultError(err, DEFAULT, 'Произошла ошибка', res); }
     });
 };
 
@@ -50,15 +50,15 @@ exports.likeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        res.status(404).send({ message: cardNotFoundErrorText });
+        res.status(NOTFOUND).send({ message: 'Пользователь или карточка с указанным _id не найдены' });
         return;
       }
       sendData({ dataType: 'card' }, 200, card, res);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: invalidDataErrorText });
-      } else { handleDefaultError(err, 500, defaultErrorText, res); }
+        res.status(VALIDATION).send({ message: 'Переданы некорректные данные' });
+      } else { handleDefaultError(err, DEFAULT, 'Произошла ошибка', res); }
     });
 };
 
@@ -70,14 +70,14 @@ exports.dislikeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        res.status(404).send({ message: cardNotFoundErrorText });
+        res.status(NOTFOUND).send({ message: 'Пользователь или карточка с указанным _id не найдены' });
         return;
       }
       sendData({ dataType: 'card' }, 200, card, res);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: invalidDataErrorText });
-      } else { handleDefaultError(err, 500, defaultErrorText, res); }
+        res.status(VALIDATION).send({ message: 'Переданы некорректные данные' });
+      } else { handleDefaultError(err, DEFAULT, 'Произошла ошибка', res); }
     });
 };
